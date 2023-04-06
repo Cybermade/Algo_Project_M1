@@ -182,6 +182,8 @@ let rec run_bfs_first_row_8_connectivity graph node =
 (* Function to find the percentage of a path between the first and the last row a given number of times *)
 let rec statistic_4_connectivity n p number_of_times =
   let rec aux number_of_times acc =
+    flush stdout;
+    Printf.printf "Beginning with n = %d and p = %f and number of times remaining = %d\n" n p number_of_times;
     if number_of_times = 0 then acc
     else
       let graph = create_board n p in
@@ -194,6 +196,8 @@ let rec statistic_4_connectivity n p number_of_times =
 
 let rec statistic_8_connectivity n p number_of_times =
   let rec aux number_of_times acc =
+    flush stdout;
+    Printf.printf "Beginning with n = %d and p = %f and number of times remaining = %d\n" n p number_of_times;
     if number_of_times = 0 then acc
     else
       let graph = create_board n p in
@@ -207,6 +211,8 @@ let rec statistic_8_connectivity n p number_of_times =
 
 let rec statistic_4_connectivity_white n p number_of_times =
   let rec aux number_of_times acc =
+    flush stdout;
+    Printf.printf "Beginning with n = %d and p = %f and number of times remaining = %d\n" n p number_of_times;
     if number_of_times = 0 then acc
     else
       let graph = create_board n p in
@@ -219,6 +225,8 @@ let rec statistic_4_connectivity_white n p number_of_times =
 
 let rec statistic_8_connectivity_white n p number_of_times =
   let rec aux number_of_times acc =
+    flush stdout;
+    Printf.printf "Beginning with n = %d and p = %f and number of times remaining = %d\n" n p number_of_times;
     if number_of_times = 0 then acc
     else
       let graph = create_board n p in
@@ -229,7 +237,7 @@ let rec statistic_8_connectivity_white n p number_of_times =
   let number_of_times_with_path = aux number_of_times 0 in
   {p = p; n = n; percentage = (float_of_int number_of_times_with_path) /. (float_of_int number_of_times) *. 100.0};;
 
-let n_values = [20;40;80];;
+let n_values = [200;400;500];;
 let p_values = [0.0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1.0];;
 
     
@@ -239,8 +247,6 @@ let apply_func_to_pairs func n_values p_values =
   List.concat (
     List.map (fun x ->
       List.map (fun y ->
-        flush stdout;
-        Printf.printf "Beginning with n = %d and p = %f\n" x y;
         func x y 20
       ) p_values
     ) n_values
@@ -302,8 +308,8 @@ let plot_scatter data_list title=
   (* Finish the plot *)
   plend ();;
 
-Printf.printf "Beginning 4-connectivity\n\n";;
-let result_4_connectivity = apply_func_to_pairs statistic_4_connectivity n_values p_values;;
+(* Printf.printf "Beginning 4-connectivity\n\n";;
+let result_4_connectivity = apply_func_to_pairs statistic_4_connectivity n_values p_values;; *)
 Printf.printf "\n------------------------------------------------------------------\n";;
 Printf.printf "\nBeginning 8-connectivity\n\n";;
 let result_8_connectivity = apply_func_to_pairs statistic_8_connectivity n_values p_values;;
@@ -314,7 +320,7 @@ let result_4_connectivity_white = apply_func_to_pairs statistic_4_connectivity_w
 
 flush stdout;
 
-plot_scatter result_4_connectivity "4-connectivity";;
+(* plot_scatter result_4_connectivity "4-connectivity";; *)
 
 
 
