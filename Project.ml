@@ -1,4 +1,3 @@
-open Owl
 open Plplot
 
 (*
@@ -10,6 +9,7 @@ Black cell = 0
 let create_board n p =
   Array.init n (fun _ ->
       Array.init n (fun _ ->
+          Random.self_init ();
           if Random.float 1.0 < p then 1 else 0
         ));;
 
@@ -48,26 +48,26 @@ let rec print_visited visited =
 let rec valid_neighbors_4_connectivity graph node =
   let i = fst node in
   let j = snd node in
-  let neighbors = [(i-1,j);(i+1,j);(i,j-1);(i,j+1)] in
+  let neighbors = [(i+1,j);(i,j+1);(i,j-1);(i-1,j)] in
   List.filter (fun x -> if fst x >= 0 && fst x < Array.length graph && snd x >= 0 && snd x < Array.length graph.(0) && graph.(fst x).(snd x) = 0 then true else false) neighbors;;
 
 let rec valid_neighbors_8_connectivity graph node =
   let i = fst node in
   let j = snd node in
-  let neighbors = [(i-1,j);(i+1,j);(i,j-1);(i,j+1);(i-1,j-1);(i-1,j+1);(i+1,j-1);(i+1,j+1)] in
+  let neighbors = [(i+1,j);(i+1,j+1);(i+1,j-1);(i,j+1);(i,j-1);(i-1,j+1);(i-1,j);(i-1,j-1)] in
   List.filter (fun x -> if fst x >= 0 && fst x < Array.length graph && snd x >= 0 && snd x < Array.length graph.(0) && graph.(fst x).(snd x) = 0 then true else false) neighbors;;
 
 (* Function to find the valid neighbors of a node (white cell) *)
 let rec valid_neighbors_4_connectivity_white graph node =
   let i = fst node in
   let j = snd node in
-  let neighbors = [(i-1,j);(i+1,j);(i,j-1);(i,j+1)] in
+  let neighbors = [(i,j+1);(i+1,j);(i-1,j);(i,j-1)] in
   List.filter (fun x -> if fst x >= 0 && fst x < Array.length graph && snd x >= 0 && snd x < Array.length graph.(0) && graph.(fst x).(snd x) = 1 then true else false) neighbors;;
 
 let rec valid_neighbors_8_connectivity_white graph node =
   let i = fst node in
   let j = snd node in
-  let neighbors = [(i-1,j);(i+1,j);(i,j-1);(i,j+1);(i-1,j-1);(i-1,j+1);(i+1,j-1);(i+1,j+1)] in
+  let neighbors = [(i,j+1);(i+1,j+1);(i-1,j+1);(i+1,j);(i-1,j);(i+1,j-1);(i-1,j-1);(i,j-1)] in
   List.filter (fun x -> if fst x >= 0 && fst x < Array.length graph && snd x >= 0 && snd x < Array.length graph.(0) && graph.(fst x).(snd x) = 1 then true else false) neighbors;;
 
 (* Function to find the connected components of a graph *)
@@ -94,6 +94,11 @@ let rec dfs_algorithm_8_connectivity_white graph visited node =
   let all_visited = node::visited in
   let unvisited_neighbors = List.filter (fun x -> not (List.mem x all_visited)) neighbors in
   List.fold_left (fun all_visited neighbor -> if not (List.mem neighbor all_visited) && not (path_exists_columns graph all_visited) then dfs_algorithm_8_connectivity_white graph all_visited neighbor else all_visited) all_visited unvisited_neighbors;;
+
+
+
+
+(* Function to check if there is a path from the first row to the last row *)
 
 
 
@@ -237,17 +242,17 @@ let rec statistic_8_connectivity_white n p number_of_times =
   let number_of_times_with_path = aux number_of_times 0 in
   {p = p; n = n; percentage = (float_of_int number_of_times_with_path) /. (float_of_int number_of_times) *. 100.0};;
 
-let n_values = [200;400;500];;
+let n_values = [10;20;30;40;50;60;70;80;90;100];;
 let p_values = [0.0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1.0];;
 
-    
+let n_values2 = [200;400;500];;
 
 
 let apply_func_to_pairs func n_values p_values =
   List.concat (
     List.map (fun x ->
       List.map (fun y ->
-        func x y 20
+        func x y 10
       ) p_values
     ) n_values
   );;
@@ -309,25 +314,39 @@ let plot_scatter data_list title=
   plend ();;
 
 (* Printf.printf "Beginning 4-connectivity\n\n";;
-let result_4_connectivity = apply_func_to_pairs statistic_4_connectivity n_values p_values;; *)
+let result_4_connectivity = apply_func_to_pairs statistic_4_connectivity n_values p_values;;
 Printf.printf "\n------------------------------------------------------------------\n";;
 Printf.printf "\nBeginning 8-connectivity\n\n";;
 let result_8_connectivity = apply_func_to_pairs statistic_8_connectivity n_values p_values;;
 Printf.printf "\n------------------------------------------------------------------\n";;
 Printf.printf "\nBeginning 4-connectivity white cells\n\n";;
-let result_4_connectivity_white = apply_func_to_pairs statistic_4_connectivity_white n_values p_values;;
+let result_4_connectivity_white = apply_func_to_pairs statistic_4_connectivity_white n_values p_values;; *)
+
+(* let result_4_connectivity2 = apply_func_to_pairs statistic_4_connectivity n_values2 p_values;; *)
+
+(* let result_8_connectivity2 = apply_func_to_pairs statistic_8_connectivity n_values2 p_values;; *)
+
+let result_4_connectivity_white2 = apply_func_to_pairs statistic_4_connectivity_white n_values2 p_values;;
 (* let result_8_connectivity_white = apply_func_to_pairs statistic_8_connectivity_white n_values p_values;; *)
 
 flush stdout;
 
-(* plot_scatter result_4_connectivity "4-connectivity";; *)
+(* plot_scatter result_4_connectivity "4-connectivity from 0 to 100";;
 
 
 
-plot_scatter result_8_connectivity "8-connectivity";;
+plot_scatter result_8_connectivity "8-connectivity from 0 to 100";;
 
 
-plot_scatter result_4_connectivity_white "4-connectivity white cells";;
+plot_scatter result_4_connectivity_white "4-connectivity white cells from 0 to 100";; *)
+(* 
+plot_scatter result_4_connectivity2 "4-connectivity from 200 to 500";; *)
+
+(* plot_scatter result_8_connectivity2 "8-connectivity from 200 to 500";; *)
+
+plot_scatter result_4_connectivity_white2 "4-connectivity white cells from 200 to 500";;
+
+
 
 
 (* plot_scatter result_8_connectivity_white "8-connectivity white cells";; *)
